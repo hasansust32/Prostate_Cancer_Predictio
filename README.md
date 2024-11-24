@@ -85,7 +85,7 @@ prostate-cancer-prediction/
 
 Sample output visualization:
 
-![Model Performance](images/results.png)
+![Model Accuracy](images/Accuracy.png)
 
 ## Contributing
 
