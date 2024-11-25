@@ -64,7 +64,8 @@ prostate-cancer-prediction/
 ├── requirements.txt                 # Python dependencies
 └── utils.py                         # Helper functions
 ```
-
+## Our Approach for this Research: 
+![Our Approach](images/diagram.png)
 ## Usage
 
 1. **Feature Engineering**:
