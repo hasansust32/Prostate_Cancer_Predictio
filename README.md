@@ -1,118 +1,85 @@
+# Prostate Cancer Prediction with Machine Learning
 
-# Prostate Cancer Prediction Using Machine Learning
+A comparison of classical classifiers, a small neural network and a voting ensemble for predicting whether a prostate tumour is malignant or benign from eight tumour measurements.
 
-## Overview
+This repository contains the notebook and data for the IEEE paper **"Can Machine Learning Techniques Predict Prostate Cancer Accurately? The Fact and Remedy"** ([IEEE Xplore](https://ieeexplore.ieee.org/document/9641099)), on which I am first author.
 
-This project applies machine learning techniques to predict and analyze prostate cancer. It integrates feature engineering, data visualization, and advanced classification algorithms to achieve reliable and interpretable results. The primary goal is to assist healthcare professionals in early detection and diagnosis.
+> This is a research exercise on a small public dataset. It is not a diagnostic tool and must not be used for clinical decisions.
 
-## Features
+## Data
 
-- **Data Analysis & Visualization**: Understand trends and patterns in prostate cancer datasets using tools like `seaborn` and `matplotlib`.
-- **Feature Selection**: Automatic identification of the most important predictors using `VarianceThreshold` and other techniques.
-- **Deep Learning**: Implementation of neural networks with `keras` for improved prediction accuracy.
-- **Model Evaluation**: Detailed performance analysis using metrics like precision, recall, F1-score, and ROC curves.
+[`dataset/Prostate_Cancer.csv`](dataset/Prostate_Cancer.csv): **100 patients**, label `diagnosis_result` (`M` malignant / `B` benign) and eight numeric features: `radius`, `texture`, `perimeter`, `area`, `smoothness`, `compactness`, `symmetry`, `fractal_dimension`.
 
-## Requirements
+## Method
 
-This project requires Python and the following libraries:
-- `numpy`
-- `pandas`
-- `seaborn`
-- `matplotlib`
-- `scikit-learn`
-- `keras`
-- `tensorflow`
-
-## Getting Started
-
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/prostate-cancer-prediction.git
-   cd prostate-cancer-prediction
-   ```
-
-2. **Install Dependencies**:
-   Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the required libraries:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Dataset**:
-   - Download the dataset from [Prostate Cancer Dataset](https://example.com/prostate-dataset) (replace with the actual link).
-   - Place the dataset in the `data/` directory.
-
-4. **Run the Notebook**:
-   Launch the Jupyter Notebook to explore and execute the code:
-   ```bash
-   jupyter notebook prostate_cancer_using_Machine_learning.ipynb
-   ```
-
-## Project Structure
-
+```mermaid
+flowchart LR
+    A[Prostate_Cancer.csv<br/>100 × 8 features] --> B[EDA<br/>box plots, pair plot, correlation]
+    B --> C[Train/test split 70/30]
+    C --> D[VarianceThreshold<br/>constant-feature filter]
+    D --> E[StandardScaler]
+    E --> M1[Random Forest]
+    E --> M2[SVM]
+    E --> M3[KNN, k searched]
+    E --> M4[Logistic Regression]
+    E --> M5[Keras MLP<br/>12-8-1, dropout 0.2]
+    M3 & M4 --> M6[Voting ensemble<br/>LR + KNN, hard and soft]
+    M1 & M2 & M3 & M4 & M5 & M6 --> R[Accuracy, classification report,<br/>ROC curves]
 ```
-prostate-cancer-prediction/
-│
-├── data/
-│   └── prostate_cancer.csv          # Dataset
-├── models/
-│   └── trained_model.h5             # Trained deep learning model
-├── notebooks/
-│   └── prostate_cancer_analysis.ipynb # Jupyter Notebook
-├── images/
-│   └── results.png                  # Visualizations and outputs
-├── README.md                        # Project documentation
-├── requirements.txt                 # Python dependencies
-└── utils.py                         # Helper functions
-```
-## Our Approach for this Research: 
-![Our Approach](images/diagram.png)
-## Usage
-
-1. **Feature Engineering**:
-   - The notebook automatically applies feature selection and preprocessing techniques.
-2. **Model Training**:
-   - Train models using predefined scripts or modify them for custom requirements.
-3. **Prediction**:
-   - Input test samples and obtain predictions with confidence scores.
 
 ## Results
 
-- **Model Performance**:
-  - Accuracy: 95%
-  - Precision: 94%
-  - Recall: 96%
-- **Visual Insights**:
-  - ROC curves, confusion matrices, and feature importance charts are included.
+Test accuracy saved in the notebook (30 held-out patients, so one patient ≈ 3.3 percentage points):
 
-Sample output visualization:
+| Model | Test accuracy |
+|---|---:|
+| Keras neural network | 90.00% |
+| Voting ensemble (LR + KNN) | ≈ 90% (from its classification report) |
+| K-Nearest Neighbours | 86.67% |
+| Logistic Regression | 86.67% |
+| Random Forest | 80.00% |
+| SVM | 80.00% |
 
-![Model Accuracy](images/Accuracy.png)
+The paper reports a best result of 95% accuracy, 94% precision and 96% recall. Those figures are **not** reproduced by the outputs saved in this notebook, which top out at 90%; the difference is most likely run-to-run variance on a 30-sample test set.
 
-## Contributing
+![Model accuracy](images/Accuracy.png)
 
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-new
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add new feature"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature-new
-   ```
-5. Open a Pull Request.
+![ROC curves](images/ROC%20curve%20of%20the%20models.png)
 
-## License
+## Repository structure
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```text
+Prostate_Cancer_Predictio/
+├── prostate_canacer_using_Machine_learning.ipynb   # Full analysis
+├── dataset/Prostate_Cancer.csv
+├── images/        # EDA plots, accuracy chart, ROC curves, method diagram
+└── accuracy.xlsx  # Accuracy summary used for the chart
+```
 
-## Contact
+## Running the notebook
 
-For inquiries or issues, please contact:
-- **Name**: Your Name  
-- **Email**: hasansust32@gmail.com  
-- **GitHub**: [S M Mahamudul Hasan](https://github.com/hasansust32/Prostate_Cancer_Predictio)
+```bash
+git clone https://github.com/hasansust32/Prostate_Cancer_Predictio.git
+cd Prostate_Cancer_Predictio
+python -m venv .venv && source .venv/bin/activate
+pip install jupyter pandas numpy scikit-learn tensorflow matplotlib seaborn
+jupyter notebook prostate_canacer_using_Machine_learning.ipynb
+```
+
+The notebook was written in Google Colab. Skip the Google Drive cell and load `dataset/Prostate_Cancer.csv` directly. There is no pinned environment; Keras is used through TensorFlow.
+
+## Limitations
+
+- **Very small dataset.** With 100 patients and a 30-patient test set, accuracy differences of a few points are within noise. Cross-validation would give a more reliable comparison.
+- No fixed random seeds, so results change between runs.
+- No external validation set and no calibration analysis.
+
+## Future improvements
+
+- Stratified, repeated k-fold cross-validation with confidence intervals.
+- Fixed seeds and a pinned `requirements.txt` so results are reproducible.
+- Report sensitivity for the malignant class as the primary metric.
+
+## Author
+
+**S M Mahamudul Hasan** · [GitHub](https://github.com/hasansust32) · [Portfolio](https://www.hasansm.com/) · [LinkedIn](https://www.linkedin.com/in/sm-mahamudul-hasan/)
